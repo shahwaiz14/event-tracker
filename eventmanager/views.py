@@ -197,7 +197,7 @@ class EventFrequency(ListAPIView):
                 )
                 .count()
             )
-            return Response({"event_name": event_name, "count": count})
+            return Response({"event_name": event_name, "total": count})
         else:
             event_count = (
                 self.get_queryset().values("event_name").annotate(total=Count("event_name"))
