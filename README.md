@@ -8,8 +8,8 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 
 ## Table of Contents
 
-- [Architecture](#architecture)
-- [Installation Instructions for your Device](#installation-instructions)
+- [ARCHITECTURE](#architecture)
+- [INSTALLATION INSTRUCTIONS](#installation-instructions)
 - [THIS SOLUTION SHOULD PROVIDE](#this-solution-should-provide)
 
 ## ARCHITECTURE
@@ -25,6 +25,7 @@ Ensure that you have the following installed:
 - virtualenv
 
 **Step-by-step Guide**
+
 1. Clone the repository:
 
 ```sh
@@ -57,7 +58,24 @@ pip install -r requirements.txt
 
 4. Create a database from your terminal. Make sure you have postgres installed on your machine.
 
-5. Set up the database (I am using postgresql). Add this to your `DATABASES` setting in settings.py:
+```sh
+createdb -h localhost -p 5432 -U shahwaiz EventManager
+```
+
+5. Set up the database (I am using postgresql). Add this to your `DATABASES` setting in settings.py. Make sure to add the `USER` property.
+
+```python
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "EventManager",
+        "USER": {USER},
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "",
+    }
+}
+```
 
 6. Run the following command to apply migrations:
 
@@ -72,6 +90,30 @@ python3 manage.py runserver
 ```
 
 Visit http://localhost:8000 in your web browser to see your application running.
+
+### Creating a new user and login ###
+You will not be able to make any request until you create a new user and login. You can do this through Django Rest Framework's browsable API or through command line.
+
+8. Register a new user
+```sh
+curl -X POST http://127.0.0.1:8088/auth/users/ --data 'username=djoser&password=alpine12'
+```
+
+9. Log in
+```sh
+curl -X POST http://127.0.0.1:8088/auth/token/login/ --data 'username=djoser&password=alpine12'
+```
+
+This will return a auth token, like this `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"`. Store this token, as you will need it to communicate with EventTracker API.
+
+10. Check if your token is working
+
+```sh
+curl -LX GET http://127.0.0.1:8088/auth/users/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
+```
+
+This will return something like this: `{"email": "", "username": "djoser", "id": 1}`
+
 
 ## THIS SOLUTION SHOULD PROVIDE:
 
@@ -238,7 +280,7 @@ if response.status_code == 200:
 ```
 
 
-9. User can views events data, specifically the frequency at which events occur. 
+9. User can views events data, specifically the frequency at which events occur by optionally providing the event_name, start_date, end_date. 
 
 Terminal
 ```sh
