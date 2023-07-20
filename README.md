@@ -104,7 +104,7 @@ curl -X POST http://127.0.0.1:8088/auth/users/ --data 'username=djoser&password=
 curl -X POST http://127.0.0.1:8088/auth/token/login/ --data 'username=djoser&password=alpine12'
 ```
 
-This will return a auth token, like this `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"`. Store this token, as you will need it to communicate with EventTracker API.
+This will return a auth token like this `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"`. Store this token, as you will need it to communicate with EventTracker API.
 
 10. Check if your token is working
 
@@ -117,7 +117,7 @@ This will return something like this: `{"email": "", "username": "djoser", "id":
 
 ## THIS SOLUTION SHOULD PROVIDE:
 
-_Django Rest Framework's Browsable API is more intuitive to interact and test this API. However, if you want to use Python or terminal, here is the code to interact with the Event-Tracker API:_
+_Django Rest Framework's Browsable API is more intuitive to interact and to test this API. If you use the browsable API, you will need to install `modheader` chrome extension, so that it can pass the auth token in the header to all the requests you make to eventTracker API. However, if you want to use Python or terminal, here is the code to interact with the Event-Tracker API:_
 
 (Please ensure that you replace the port number in the URL with the appropriate port that your application is running on your local machine. Additionally, don't forget to add your authentication token in the Authorization header for all requests)
 
