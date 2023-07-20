@@ -10,6 +10,7 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 
 - [Architecture](#architecture)
 - [Installation Instructions for your Device](#installation-instructions)
+- [THIS SOLUTION SHOULD PROVIDE](#this-solution-should-provide)
 
 ## ARCHITECTURE
 
@@ -67,8 +68,35 @@ python3 manage.py migrate
 7. Run the server
 
 ```sh
-python manage.py runserver
+python3 manage.py runserver
 ```
 
 Visit http://localhost:8000 in your web browser to see your application running.
 
+## THIS SOLUTION SHOULD PROVIDE:
+
+__Django Rest Framework's Browsable API is more intuitive to interact and test this API. However, if you want to use Python or terminal, here is the code to interact with the Event-Tracker API:__
+
+1. Users should be able to get a list of events they have created
+
+Terminal:
+```sh
+curl http://127.0.0.1:8081/api/events/ -H 'Authorization: Token {your_token}'
+```
+(Please ensure that you replace the port number in the URL with the appropriate port that your application is running on your local machine. Additionally, don't forget to add your authentication token in the Authorization header)
+
+```python
+import requests
+token = 'your_token'
+url = "http://127.0.0.1:8081/api/events/"
+headers = {
+    "Authorization": f"Token {token}",
+    "Content-Type": "application/json"
+}
+data = {
+    "name": "review",
+    "description": "reviewed item"
+}
+
+response = requests.post(url, headers=headers, json=data)
+```
