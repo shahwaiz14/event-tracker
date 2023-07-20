@@ -81,9 +81,9 @@ class EventUpdateDelete(RetrieveUpdateDestroyAPIView):
     """
     API view to retrieve, update or delete an event.
 
-    The EventDetail view is protected by authentication. A user must be authenticated 
-    to retrieve, update or delete their events. The view only returns the events that belong 
-    to the authenticated user and allows them to delete their own events.
+    A user must be authenticated  to retrieve, update or delete their events. 
+    The view only returns the events that belong  to the authenticated user and allows 
+    them to delete their own events.
     """
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
@@ -94,7 +94,7 @@ class EventUpdateDelete(RetrieveUpdateDestroyAPIView):
         Returns a queryset that only includes events that belong to the authenticated user.
 
         The `get_queryset` method is used to restrict the list of events that the 
-        authenticated user can see and delete. Only events that belong to the user 
+        authenticated user can see, update and delete. Only events that belong to the user 
         (where `user.id` matches `self.request.user.id`) will be returned.
 
         Returns:
@@ -103,25 +103,42 @@ class EventUpdateDelete(RetrieveUpdateDestroyAPIView):
         return Event.objects.filter(user__id=self.request.user.id)
     
 class EventLogData(CreateAPIView):
+    """
+    API endpoint that allows authenticated users to create event log data.
+
+    The endpoint expects a payload containing the event name and any relevant event data. The creator field is 
+    automatically set to the current user making the request. If the provided event name does not correspond to 
+    an existing event, the request will fail with an appropriate error message.
+
+    """
+    
     serializer_class = EventDataSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         """
-        Perform creation of a new event.
-        Sets the user field of the event to the current user.
+        Overridden method from CreateAPIView to customize the process of saving the instance.
+        This method sets the creator field of the event log data to the current authenticated user.
+
+        Args:
+            serializer (EventDataSerializer): A serializer instance.
         """
         serializer.save(creator_id=self.request.user.id)
 
     def create(self, request):
         """
-        Create a new event.
-        Sets the event field of the eventlog to the relevant event and creator to the current user.
+        Handle POST request for creating a new event log data.
+
+        This method validates the incoming data using the serializer, checks if the event exists, and if the event 
+        exists, it saves the data and sets the creator to the current authenticated user and the event to the 
+        corresponding event instance. If the event does not exist, it returns a response with an error message.
+
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
         event = Event.objects.filter(name=request.data.get("event_name")).first()
+        # If user tries to capture an event that they have not created
         if event is None:
             return Response(
                 {
@@ -135,6 +152,12 @@ class EventLogData(CreateAPIView):
 
 
 class EventFrequency(ListAPIView):
+    """
+    API endpoint that provides event frequency data for authenticated users.
+
+    The endpoint provides the total number of times a specified event has occurred within a given date range.
+    If no event name is specified, it returns the count for all events created by the authenticated user.
+    """
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -144,8 +167,24 @@ class EventFrequency(ListAPIView):
         return EventLog.objects.filter(creator_id=self.request.user.id)
 
     def get(self, request):
+        """
+        Handle GET request for event frequency data.
+
+        This method retrieves the 'event_name', 'start_date' and 'end_date' parameters from the request.
+        If 'event_name' is specified, it returns the count of event logs with that name within the specified date range.
+        If 'event_name' is not specified, it returns a count of all events created by the authenticated user.
+
+        Args:
+            request (HttpRequest): The request that has triggered this method.
+
+        Returns:
+            Response: HttpResponse containing the event frequency data.
+        """
+        # Assuming we start collecting data from this date, so if no start time is specified,
+        # we get everything from the beginning
+        app_start_date = datetime(2020, 1, 1)
         event_name = request.query_params.get('event_name')
-        start_date = request.query_params.get('start_date') or datetime(2020, 1, 1)
+        start_date = request.query_params.get('start_date') or app_start_date
         end_date = request.query_params.get('end_date') or date.today()
 
         if event_name:
@@ -159,14 +198,21 @@ class EventFrequency(ListAPIView):
                 .count()
             )
             return Response({"event_name": event_name, "count": count})
-
-        event_count = (
-            self.get_queryset().values("event_name").annotate(total=Count("event_name"))
-        )
-        return Response(event_count)
+        else:
+            event_count = (
+                self.get_queryset().values("event_name").annotate(total=Count("event_name"))
+            )
+            return Response(event_count)
 
 
 class EventTrendsView(ListAPIView):
+    """
+    API endpoint that provides event trends data for authenticated users.
+
+    The endpoint returns a count of each event logged by the authenticated user per day. 
+    The count is grouped by event names.
+
+    """
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -177,6 +223,18 @@ class EventTrendsView(ListAPIView):
 
     @staticmethod
     def format_data(query_set):
+        """
+        Formats the data received from the queryset into a dictionary.
+
+        The keys of the dictionary are the dates of the events. The values are dictionaries,
+        where the keys are the event names and the values are the count of events on that date.
+
+        Args:
+            query_set (QuerySet): A QuerySet containing the data to be formatted.
+
+        Returns:
+            dict: The formatted data.
+        """
         formatted_data = {}
         for item in query_set:
             date_str = item['date'].isoformat()
@@ -187,6 +245,11 @@ class EventTrendsView(ListAPIView):
         return formatted_data
 
     def get(self, request):
+        """
+        Handle GET request for event trends data.
+
+        This method groups the event logs by date and event name and gets the count of event logs for each group.
+        """
         query_set = (
             self.get_queryset().annotate(date=functions.TruncDate("timestamp"))
             .values("date", "event_name")
