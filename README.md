@@ -98,6 +98,7 @@ response = requests.get(url, headers=headers)
 print(response.text)
 ```
 
+
 2. Users should be able to create events. If you try to create a duplicate event, you will get an error.
 
 Terminal:
@@ -126,6 +127,7 @@ data = {
 response = requests.post(url, headers=headers, json=data)
 ```
 
+
 3. Users can search the events they created via the title and description
 
 Terminal
@@ -146,7 +148,8 @@ response = requests.get(url, headers=headers, params=params)
 print(response.json()) 
 ```
 
-5. The user can update an event if needed
+
+4. The user can update an event if needed
 
 Terminal:
 ```sh
@@ -165,7 +168,8 @@ data = {'description': 'modified description'}
 response = requests.patch(url, headers=headers, data=json.dumps(data))
 ```
 
-6. The user can remove an event if needed by passing in event_id as a path parameter
+
+5. The user can remove an event if needed by passing in event_id as a path parameter
 
 Terminal:
 ```sh
@@ -183,7 +187,34 @@ requests.delete(url, headers=headers)
 
 ```
 
-7. 
+
+7. Users can use this endpoint to implement in their frontend (or their platform) so that we can log event’s data on their customers events
+
+Terminal:
+```sh
+curl -X POST http://127.0.0.1:8081/api/eventlogs/ \
+-H "Authorization: Token {token}" \
+-H "Content-Type: application/json" \
+-d '{"event_name":"purchased","data":"{"amount":50, product_id=2}"}'
+```
+
+Python:
+```python
+import requests
+
+url = 'http://127.0.0.1:8081/api/eventlogs/'
+headers = {
+    'Authorization': f'Token {token}',
+    'Content-Type': 'application/json'
+}
+data = {
+    'event_name': 'purchased',
+    'data': '{"amount": 50, "product_id": 2}'
+}
+
+response = requests.post(url, headers=headers, json=data)
+```
+
 
 8. The user can view events trend data for their website
 
@@ -206,6 +237,7 @@ if response.status_code == 200:
     print("Event trend:", data)
 ```
 
+
 9. User can views events data, specifically the frequency at which events occur. 
 
 Terminal
@@ -216,4 +248,19 @@ curl 'http://127.0.0.1:8081/api/stats/event_frequency?event_name=click&start_dat
 
 Python
 ```python
+import requests
+
+url = 'http://127.0.0.1:8081/api/stats/event_frequency'
+headers = {
+    'Authorization': f'Token {token}'
+}
+# passing params is optional
+params = {
+    'event_name': 'click',
+    'start_date': '2021-01-01',
+    'end_date': '2024-01-01'
+}
+
+response = requests.get(url, headers=headers, params=params)
+print(response.text)
 ```
