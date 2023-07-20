@@ -8,8 +8,8 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 
 ## Table of Contents
 
-- Architecture
-- Installation Instructions for your Device
+- [Architecture](#architecture)
+- [Installation Instructions for your Device](#installation-instructions)
 
 ## ARCHITECTURE
 
@@ -26,23 +26,33 @@ Ensure that you have the following installed:
 **Step-by-step Guide**
 1. Clone the repository:
 
-```git clone https://github.com/shahwaiz14/event-tracker.git```
+```sh
+git clone https://github.com/shahwaiz14/event-tracker.git
+```
 
 Navigate into the project directory:
 
-```cd <repository>```
+```sh
+cd event-tracker
+```
 
 2. Create a virtual environment:
 
-```python3 -m venv env```
+```sh
+python3 -m venv env
+```
 
 Activate the virtual environment (for MacBook):
 
-```source env/bin/activate```
+```sh
+source env/bin/activate
+```
 
 3. Install the required packages
 
-```pip install -r requirements.txt```
+```sh
+pip install -r requirements.txt
+```
 
 4. Create a database from your terminal. Make sure you have postgres installed on your machine.
 
@@ -50,11 +60,15 @@ Activate the virtual environment (for MacBook):
 
 6. Run the following command to apply migrations:
 
-```python3 manage.py migrate```
+```sh
+python3 manage.py migrate
+```
 
 7. Run the server
 
-```python manage.py runserver```
+```sh
+python manage.py runserver
+```
 
 Visit http://localhost:8000 in your web browser to see your application running.
 
