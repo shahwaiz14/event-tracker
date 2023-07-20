@@ -14,6 +14,27 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 
 ## ARCHITECTURE
 
+**Data Model:**
+EventTracker's data model is comprised of three components: User, Event, and Event Log.
+
+1. _User Table_: The User model is Django's built-in model for authentication. It includes fields like username, password, email, first_name, last_name. The User model is used for authentication and represents the users of the application.
+
+2. _Event Table_: The Event model represents an event created by a user. The fields of the Event model are:
+
+- **user**: A foreign key to the User model. This is a many-to-one relationship where each user can create multiple events but each event is linked to a single user. If the user is deleted, all their events are also deleted due to the CASCADE on_delete policy.
+- **name**: A char field that stores the name of the event.
+- **description**: A text field that stores a description of the event.
+- **created_at**: A datetime field that stores the date and time when the event was created. This field is automatically set when the event is created and cannot be changed manually.
+- **modified_at**: A datetime field that stores the date and time when the event was last modified. This field is automatically updated every time the event is saved.
+
+3. _EventLog Table_: The EventLog model represents an event log created by a user. The fields of the EventLog model are:
+
+- **creator**: A foreign key to the User model. This is a many-to-one relationship where each user can create multiple event logs but each event log is linked to a single user.
+- **event**: A foreign key to the Event model. 
+- **event_name**: A char field that stores the name of the event.
+- **timestamp**: A datetime field that stores the date and time when the event took place. This field is automatically set.
+- **data**: A JSON field that stores the data/additional properties of the event in JSON format.
+
 
 ## INSTALLATION INSTRUCTIONS
 
@@ -89,19 +110,19 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 
-Visit http://localhost:8000 in your web browser to see your application running.
+Visit http://localhost:8081 in your web browser to see your application running.
 
 ### Creating a new user and login ###
 You will not be able to make any request until you create a new user and login. You can do this through Django Rest Framework's browsable API or through command line.
 
 8. Register a new user
 ```sh
-curl -X POST http://127.0.0.1:8088/auth/users/ --data 'username=djoser&password=alpine12'
+curl -X POST http://127.0.0.1:8081/auth/users/ --data 'username=djoser&password=alpine12'
 ```
 
 9. Log in
 ```sh
-curl -X POST http://127.0.0.1:8088/auth/token/login/ --data 'username=djoser&password=alpine12'
+curl -X POST http://127.0.0.1:8081/auth/token/login/ --data 'username=djoser&password=alpine12'
 ```
 
 This will return a auth token like this `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"`. Store this token, as you will need it to communicate with EventTracker API.
@@ -109,7 +130,7 @@ This will return a auth token like this `{"auth_token": "b704c9fc3655635646356ac
 10. Check if your token is working
 
 ```sh
-curl -LX GET http://127.0.0.1:8088/auth/users/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
+curl -LX GET http://127.0.0.1:8081/auth/users/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
 ```
 
 This will return something like this: `{"email": "", "username": "djoser", "id": 1}`
