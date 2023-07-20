@@ -19,21 +19,23 @@ EventTracker's data model is comprised of three components: User, Event, and Eve
 
 1. _User Table_: The User model is Django's built-in model for authentication. It includes fields like username, password, email, first_name, last_name. The User model is used for authentication and represents the users of the application.
 
-2. _Event Table_: The Event model represents an event created by a user. The fields of the Event model are:
+2. _Event Table_: The Event model represents an event created by a user. For example: a user of our API can create an event called "purchased". The fields of the Event model are:
 
-- **user**: A foreign key to the User model. This is a many-to-one relationship where each user can create multiple events but each event is linked to a single user. If the user is deleted, all their events are also deleted due to the CASCADE on_delete policy.
+- **user_id**: A foreign key to the User model. This is a many-to-one relationship where each user can create multiple events but each event is linked to a single user. If the user is deleted, all their events are also deleted due to the CASCADE on_delete policy.
 - **name**: A char field that stores the name of the event.
 - **description**: A text field that stores a description of the event.
 - **created_at**: A datetime field that stores the date and time when the event was created. This field is automatically set when the event is created and cannot be changed manually.
 - **modified_at**: A datetime field that stores the date and time when the event was last modified. This field is automatically updated every time the event is saved.
 
-3. _EventLog Table_: The EventLog model represents an event log created by a user. The fields of the EventLog model are:
+3. _EventLog Table_: The EventLog model represents an event created by our user's customer. Our user can use our API endpoint to POST to this table. So, when a customer who visits our user's website purchases an item, we get an event called "purchased", which we store in the EventLog table. The user can also try to capture special attributes, like {"total_amount":50, "quantity":2}, and send it in the data field. The fields of the EventLog model are:
 
-- **creator**: A foreign key to the User model. This is a many-to-one relationship where each user can create multiple event logs but each event log is linked to a single user.
-- **event**: A foreign key to the Event model. 
+- **creator**: A foreign key to the User model.
+- **event_id**: A foreign key to the Event model. 
 - **event_name**: A char field that stores the name of the event.
 - **timestamp**: A datetime field that stores the date and time when the event took place. This field is automatically set.
 - **data**: A JSON field that stores the data/additional properties of the event in JSON format.
+
+The architecture of the EventLog model allows our users to record detailed, timestamped logs of events occurring on their websites. These logs can be used later for detailed analysis and tracking of user behaviour and activities on the website.
 
 
 ## INSTALLATION INSTRUCTIONS
