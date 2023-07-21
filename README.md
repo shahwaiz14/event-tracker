@@ -15,7 +15,7 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 ## ARCHITECTURE
 
 **Data Model:**
-EventTracker's data model is comprised of three components: User, Event, and Event Log.
+EventTrackr's data model is comprised of three components: User, Event, and Event Log.
 
 1. _User Table_: The User model is Django's built-in model for authentication. It includes fields like username, password, email, first_name, last_name. It is used for authentication and represents the users of our API.
 
@@ -25,17 +25,18 @@ EventTracker's data model is comprised of three components: User, Event, and Eve
 - **name**: A char field that stores the name of the event.
 - **description**: A text field that stores a description of the event.
 - **created_at**: A datetime field that stores the date and time when the event was created. This field is automatically set when the event is created and cannot be changed manually.
-- **modified_at**: A datetime field that stores the date and time when the event was last modified. This field is automatically updated every time the event is saved.
+- **modified_at**: A datetime field that stores the date and time when the event was last modified. This field is automatically updated every time an event is modified.
 
 3. _EventLog Table_: The EventLog model represents an event created by our user's customer. Our user can use our API endpoint to POST to this table. So, when a customer who visits our user's website purchases an item, we get an event called "purchased", which we store in the EventLog table. The user can also try to capture special attributes, like {"total_amount":50, "quantity":2}, and send it in the data field. The fields of the EventLog model are:
 
-- **creator**: A foreign key to the User model.
+- **creator_id**: A foreign key to the User model.
 - **event_id**: A foreign key to the Event model. 
 - **event_name**: A char field that stores the name of the event.
-- **timestamp**: A datetime field that stores the date and time when the event took place. This field is automatically set.
+- **timestamp**: A datetime field that stores the date and time when the event took place. This field is automatically set when an event occurs.
 - **data**: A JSON field that stores the data/additional properties of the event in JSON format.
 
-The architecture of the EventLog model allows our users to record detailed, timestamped logs of events occurring on their websites. These logs can be used later for detailed analysis and tracking of user behaviour and activities on the website.
+The architecture of the EventLog model allows our users to record detailed, timestamped logs of events occurring on their website by their customers. These logs can be used later for detailed analysis and tracking of user behaviour and activities on the website.
+
 
 **Diagram:**
 
@@ -82,13 +83,13 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Open a new terminal windowm and create a database from your terminal. Make sure you have postgres installed on your machine.
+4. Open a new terminal window and create a database from your terminal. Make sure you have postgres installed on your machine.
 
 ```sh
 createdb -h localhost -p 5432 -U shahwaiz EventManager
 ```
 
-5. Set up the database (I am using postgresql). Add this to your `DATABASES` setting in settings.py. Make sure to add the `USER` property.
+5. Set up the database (I am using postgresql). Add this to your `DATABASES` setting in `settings.py`. Make sure to add the `USER` property.
 
 ```python
 DATABASES = {
@@ -268,7 +269,7 @@ requests.delete(url, headers=headers)
 ```
 
 
-**6. Users can use this endpoint to implement in their frontend (or their platform) so that we can log event’s data on their customers events** Data field can't be null, so if you don't want to record data, pass `{}`.
+**6. Users can use this endpoint to implement in their frontend (or their platform) so that we can log event’s data on their customers events.** Data field can't be null, so if you don't want to record data, pass `{}`.
 
 Terminal:
 ```sh
@@ -350,4 +351,29 @@ params = {
 
 response = requests.get(url, headers=headers, params=params)
 print(response.text)
+```
+Example response if you don't pass `event_name` param: 
+```
+[
+  {
+    "event_name": "submit",
+    "total": 5
+  },
+  {
+    "event_name": "click",
+    "total": 3
+  },
+  {
+    "event_name": "purchase",
+    "total": 2
+  }
+]
+```
+
+Example response if you pass the `event_name` param:
+```
+{
+  "event_name": "submit",
+  "total": 5
+}
 ```
