@@ -88,7 +88,7 @@ class EventUpdateDelete(RetrieveUpdateDestroyAPIView):
     """
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'pk'
+    lookup_field = 'pk'  # Specifies the model field used for object lookup, 'pk' stands for primary key.
 
     def get_queryset(self):
         """
