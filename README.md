@@ -317,6 +317,13 @@ if response.status_code == 200:
     print("Event trend:", data)
 ```
 
+The response of this method looks something like this: 
+```
+{
+    "2023-01-01": {"event1": 1, "event2": 1},
+    "2023-01-02": {"event1": 1},
+}
+```
 
 **8. User can views events data, specifically the frequency at which events occur by optionally providing the event_name, start_date, end_date.**
 
