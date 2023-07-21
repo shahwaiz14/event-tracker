@@ -82,7 +82,7 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Create a database from your terminal. Make sure you have postgres installed on your machine.
+4. Open a new terminal windowm and create a database from your terminal. Make sure you have postgres installed on your machine.
 
 ```sh
 createdb -h localhost -p 5432 -U shahwaiz EventManager
@@ -117,13 +117,21 @@ python3 manage.py runserver
 
 Visit http://localhost:{port_number} in your web browser to see your application running.
 
+You should see a window like this:
+
+![landing page](img/landing_page.png)
+
 ### Creating a new user and login ###
 You will not be able to make any request until you create a new user and login. You can do this through Django Rest Framework's browsable API or through command line.
+
+Command Line Instructions:
 
 8. Register a new user
 ```sh
 curl -X POST http://127.0.0.1:8081/auth/users/ --data 'username=djoser&password=alpine12'
 ```
+
+This will return: `{"email":"","username":"djoser","id":1}%` 
 
 9. Log in
 ```sh
@@ -135,7 +143,7 @@ This will return a auth token like this `{"auth_token": "b704c9fc3655635646356ac
 10. Check if your token is working
 
 ```sh
-curl -LX GET http://127.0.0.1:8081/auth/users/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
+curl -LX GET http://127.0.0.1:8081/auth/users/me/ -H 'Authorization: Token {your_token}'
 ```
 
 This will return something like this: `{"email": "", "username": "djoser", "id": 1}`
@@ -143,11 +151,11 @@ This will return something like this: `{"email": "", "username": "djoser", "id":
 
 ## THIS SOLUTION SHOULD PROVIDE:
 
-_Django Rest Framework's Browsable API is more intuitive to interact and to test this API. If you use the browsable API, you will need to install `modheader` chrome extension, so that it can pass the auth token in the header to all the requests you make to eventTracker API. However, if you want to use Python or terminal, here is the code to interact with the Event-Tracker API:_
+**Note:** Django Rest Framework's Browsable API is more intuitive to interact and to test this API. If you use the browsable API, you will need to install `modheader` chrome extension, so that it can pass the auth token in the header to all the requests you make to eventTracker API. However, if you want to use Python or terminal, here is the code to interact with the Event-Tracker API:
 
 (Please ensure that you replace the port number in the URL with the appropriate port that your application is running on your local machine. Additionally, don't forget to add your authentication token in the Authorization header for all requests)
 
-1. Users should be able to get a list of events they have created
+**1. Users should be able to get a list of events they have created**
 
 Terminal:
 ```sh
@@ -166,8 +174,10 @@ response = requests.get(url, headers=headers)
 print(response.text)
 ```
 
+You should get an empty list response, since no events have been created yet.
 
-2. Users should be able to create events. If you try to create a duplicate event, you will get an error.
+
+**2. Users should be able to create events. If you try to create a duplicate event, you will get an error.**
 
 Terminal:
 ```sh
@@ -196,7 +206,7 @@ response = requests.post(url, headers=headers, json=data)
 ```
 
 
-3. Users can search the events they created via the title and description
+**3. Users can search the events they created via the title and description**
 
 Terminal
 ```sh
@@ -216,8 +226,10 @@ response = requests.get(url, headers=headers, params=params)
 print(response.json()) 
 ```
 
+In this case, you should get ["test].
 
-4. The user can update an event if needed
+
+**4. The user can update an event if needed**
 
 Terminal:
 ```sh
@@ -237,7 +249,7 @@ response = requests.patch(url, headers=headers, data=json.dumps(data))
 ```
 
 
-5. The user can remove an event if needed by passing in event_id as a path parameter
+**5. The user can remove an event if needed by passing in event_id as a path parameter**
 
 Terminal:
 ```sh
@@ -256,14 +268,14 @@ requests.delete(url, headers=headers)
 ```
 
 
-7. Users can use this endpoint to implement in their frontend (or their platform) so that we can log event’s data on their customers events
+**6. Users can use this endpoint to implement in their frontend (or their platform) so that we can log event’s data on their customers events** Data field can't be null, so if you don't want to record data, pass `{}`.
 
 Terminal:
 ```sh
 curl -X POST http://127.0.0.1:8081/api/eventlogs/ \
 -H "Authorization: Token {token}" \
 -H "Content-Type: application/json" \
--d '{"event_name":"purchased","data":"{"amount":50, product_id=2}"}'
+-d '{"event_name":"test","data":{"amount":50, "product_id":2}}'
 ```
 
 Python:
@@ -284,7 +296,7 @@ response = requests.post(url, headers=headers, json=data)
 ```
 
 
-8. The user can view events trend data for their website
+**7. The user can view events trend data for their website**
 
 Terminal:
 ```sh
@@ -306,7 +318,7 @@ if response.status_code == 200:
 ```
 
 
-9. User can views events data, specifically the frequency at which events occur by optionally providing the event_name, start_date, end_date. 
+**8. User can views events data, specifically the frequency at which events occur by optionally providing the event_name, start_date, end_date.**
 
 Terminal
 ```sh
