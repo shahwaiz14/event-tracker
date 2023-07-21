@@ -1,6 +1,6 @@
 # event-tracker: flexible event tracking API
 
-![Image Description](img/logo.png)
+![logo](img/logo.png)
 
 ## ABOUT:
 
@@ -14,12 +14,14 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 
 ## ARCHITECTURE
 
+![API Architecture](img/architecture.png)
+
 **Data Model:**
 EventTracker's data model is comprised of three components: User, Event, and Event Log.
 
-1. _User Table_: The User model is Django's built-in model for authentication. It includes fields like username, password, email, first_name, last_name. The User model is used for authentication and represents the users of the application.
+1. _User Table_: The User model is Django's built-in model for authentication. It includes fields like username, password, email, first_name, last_name. It is used for authentication and represents the users of our API.
 
-2. _Event Table_: The Event model represents an event created by a user. For example: a user of our API can create an event called "purchased". The fields of the Event model are:
+2. _Event Table_: The Event model represents an event created by a user. For example: a user of our API can create an event called "purchased" and set the description to "When someone purchases item". The fields of the Event model are:
 
 - **user_id**: A foreign key to the User model. This is a many-to-one relationship where each user can create multiple events but each event is linked to a single user. If the user is deleted, all their events are also deleted due to the CASCADE on_delete policy.
 - **name**: A char field that stores the name of the event.
@@ -112,7 +114,7 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 
-Visit http://localhost:8081 in your web browser to see your application running.
+Visit http://localhost:{port_number} in your web browser to see your application running.
 
 ### Creating a new user and login ###
 You will not be able to make any request until you create a new user and login. You can do this through Django Rest Framework's browsable API or through command line.
