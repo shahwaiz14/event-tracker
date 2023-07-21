@@ -21,5 +21,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include('djoser.urls')),
     path("auth/", include('djoser.urls.authtoken')),
-    path("api/", include("event_manager.urls"))
+    path("api/", include("eventmanager.urls"))
 ]
