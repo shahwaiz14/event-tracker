@@ -10,6 +10,7 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
+from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter
 from rest_framework.exceptions import ValidationError
 
@@ -259,3 +260,12 @@ class EventTrendsView(ListAPIView):
 
         data = self.format_data(query_set)
         return Response(data)
+
+
+class LandingPageView(APIView):
+    """
+    Basic Landing Page View
+    """
+    def get(self, request):
+        return Response({"Welcome to Event Tracker"})
+        
