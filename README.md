@@ -14,8 +14,6 @@ Welcome to EventTrackr, a robust and scalable event tracking system that caters 
 
 ## ARCHITECTURE
 
-![API Architecture](img/architecture.png)
-
 **Data Model:**
 EventTracker's data model is comprised of three components: User, Event, and Event Log.
 
@@ -39,6 +37,8 @@ EventTracker's data model is comprised of three components: User, Event, and Eve
 
 The architecture of the EventLog model allows our users to record detailed, timestamped logs of events occurring on their websites. These logs can be used later for detailed analysis and tracking of user behaviour and activities on the website.
 
+
+![API Architecture](img/architecture.png)
 
 ## INSTALLATION INSTRUCTIONS
 
